@@ -23,8 +23,6 @@ public class VehicleController {
 
     @GetMapping("/getVehicles")
     private ResponseEntity<?> getAllVehicles() throws Exception{
-
-
         return ResponseEntity.ok(vehicleService.findAllVehicles());
     }
 }

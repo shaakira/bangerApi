@@ -13,7 +13,6 @@ public class VehicleService {
     private VehicleRepository vehicleRepository;
 
     public List<Vehicle> findAllVehicles() {
-
         List<Vehicle> vehicles = vehicleRepository.findAll();
         return vehicles;
     }
