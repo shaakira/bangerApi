@@ -19,19 +19,19 @@ public class User {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
+    private String customerName;
     private String userName;
     private String password;
-    private String address;
     private String email;
 
     public User() {
 
     }
 
-    public User(String userName, String password, String address, String email) {
+    public User(String customerName, String userName, String password, String email) {
+        this.customerName = customerName;
         this.userName = userName;
         this.password = password;
-        this.address = address;
         this.email = email;
     }
 
@@ -59,13 +59,7 @@ public class User {
         this.password = password;
     }
 
-    public String getAddress() {
-        return address;
-    }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public String getEmail() {
         return email;
@@ -75,9 +69,18 @@ public class User {
         this.email = email;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
     public Set<Authority> getAuthorities() {
         return authorities;
     }
+
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;

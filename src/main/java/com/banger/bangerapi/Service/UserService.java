@@ -36,28 +36,29 @@ public class UserService {
 
     public ResponseEntity<String> registerUser(User user){
         if (userRepository.existsByUserName(user.getUserName())) {
-            throw new RunTimeException("User is Already Regsistered!", HttpStatus.BAD_REQUEST);
+            throw new RunTimeException("User is Already Registered!", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RunTimeException("User Email is Already Taken!", HttpStatus.BAD_REQUEST);
         }
         else{
-            User userObject = new User(
+            User userObject = new User(user.getCustomerName(),
                     user.getUserName(),
                     bCryptPasswordEncoder.encode(user.getPassword()),
-                    user.getAddress(),
                     user.getEmail()
             );
             Set<Authority> mappedAuthorities = new HashSet<>();
-            Authority authority=authorityService.getRoleByName(AuthorityType.ROLE_Customer);
-            authority.setEmail(userObject.getEmail());
-            authority.setUserName(userObject.getUserName());
-            authority.setPassword(userObject.getPassword());
+            Authority authority=authorityService.getRoleByName(AuthorityType.ROLE_CUSTOMER);
             mappedAuthorities.add(authority);
             userObject.setAuthorities(mappedAuthorities);
             userRepository.save(userObject);
             return new ResponseEntity<>("User Registered Successfully",HttpStatus.OK);
         }
 
+    }
+
+    public User getUser(String username){
+        User user=userRepository.findByUserName(username);
+        return user;
     }
 }

@@ -54,9 +54,9 @@ public class AuthenticationController {
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
-        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+        authenticate(authenticationRequest.getUserName(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = userDetailsService.loadUserByEmail(authenticationRequest.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUserName());
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());

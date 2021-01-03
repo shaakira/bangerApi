@@ -18,19 +18,14 @@ public class JwtUserDetailsService implements UserDetailsService  {
     @Autowired
     private UserRepository userRepository;
     @Transactional(readOnly = true)
-
-    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        com.banger.bangerapi.Models.User user = userRepository.findByEmail(email);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        com.banger.bangerapi.Models.User user = userRepository.findByUserName(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found.");
         }
         //log.info("loadUserByUsername() : {}", username);
         return  new BangerUserDetails(user);
 
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
     }
 }
