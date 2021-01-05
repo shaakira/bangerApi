@@ -61,4 +61,17 @@ public class UserService {
         User user=userRepository.findByUserName(username);
         return user;
     }
+    public ResponseEntity<String> updateUser(User user,String username){
+        User existingUser=userRepository.findByUserName(username);
+        existingUser.setCustomerName(user.getCustomerName());
+        existingUser.setEmail(user.getEmail());
+        userRepository.save(existingUser);
+        return new ResponseEntity<>("User Updated Successfully",HttpStatus.OK);
+    }
+    public ResponseEntity<String> updatePassword(User user,String username){
+        User existingUser=userRepository.findByUserName(username);
+        existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(existingUser);
+        return new ResponseEntity<>("Password Updated Successfully",HttpStatus.OK);
+    }
 }
