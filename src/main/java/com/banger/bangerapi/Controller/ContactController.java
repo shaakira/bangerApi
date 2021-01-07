@@ -17,4 +17,12 @@ public class ContactController {
     public ResponseEntity<?> addContact(@RequestBody Contact contact){
         return  contactService.addContact(contact);
     }
+    @GetMapping("/getAllContacts")
+    private ResponseEntity<?> getAllContacts() throws Exception{
+        return ResponseEntity.ok(contactService.getAllContacts());
+    }
+    @GetMapping("/deleteContact/{id}")
+    public  ResponseEntity<?> deleteNotification(@PathVariable int id){
+        return  contactService.deleteNotification(id);
+    }
 }
