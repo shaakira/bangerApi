@@ -22,11 +22,12 @@ public class Vehicle {
     private int doorCount;
     private String fuelType;
     private String fuelPolicy;
+    private String type;
 
     public Vehicle() {
     }
 
-    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy) {
+    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy,String type) {
         this.name = name;
         this.price = price;
         this.image = image;
@@ -39,6 +40,7 @@ public class Vehicle {
         this.doorCount = doorCount;
         this.fuelType = fuelType;
         this.fuelPolicy = fuelPolicy;
+        this.type=type;
     }
 
     public int getId() {
@@ -143,5 +145,13 @@ public class Vehicle {
 
     public void setFuelPolicy(String fuelPolicy) {
         this.fuelPolicy = fuelPolicy;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

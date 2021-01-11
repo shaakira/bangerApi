@@ -61,11 +61,12 @@ public class AuthenticationController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
         final String token = jwtTokenUtil.generateToken(userDetails);
+        User user=userService.getUser(authenticationRequest.getUserName());
         System.out.println(userDetails);
         if (userDetails == null) {
             System.out.println("asdasdsa");
         }
-        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), roles));
+        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), roles,user.getStatus()));
     }
 
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)

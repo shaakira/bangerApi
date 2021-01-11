@@ -23,6 +23,8 @@ public class User {
     private String userName;
     private String password;
     private String email;
+    private String status="active";
+    private String type="customer";
 
     public User() {
 
@@ -81,10 +83,18 @@ public class User {
         return authorities;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
+
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",

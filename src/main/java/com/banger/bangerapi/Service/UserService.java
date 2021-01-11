@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -74,4 +76,21 @@ public class UserService {
         userRepository.save(existingUser);
         return new ResponseEntity<>("Password Updated Successfully",HttpStatus.OK);
     }
+    public List<User> getActiveUsers() {
+        return userRepository.findActiveUsers();
+    }
+    @Transactional
+    public ResponseEntity<String> blacklistUser(int id) {
+        userRepository.blacklist(id);
+        return new ResponseEntity<>("user blacklisted",HttpStatus.OK);
+    }
+    @Transactional
+    public  ResponseEntity<String>  activateUser(int id) {
+        userRepository.activate(id);
+        return new ResponseEntity<>("user activated",HttpStatus.OK);
+    }
+    public List<User> getBlacklistedUsers() {
+        return userRepository.findBlacklistUsers();
+    }
+
 }
