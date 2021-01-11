@@ -23,9 +23,13 @@ public class User {
     private String userName;
     private String password;
     private String email;
+    private String licenseImage;
+    private String utilityImage;
     private String status="active";
     private String type="customer";
-
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Booking> bookings;
     public User() {
 
     }

@@ -64,7 +64,7 @@ public class AuthenticationController {
         User user=userService.getUser(authenticationRequest.getUserName());
         System.out.println(userDetails);
         if (userDetails == null) {
-            System.out.println("asdasdsa");
+
         }
         return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), roles,user.getStatus()));
     }

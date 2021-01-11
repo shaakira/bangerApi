@@ -1,9 +1,7 @@
 package com.banger.bangerapi.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Vehicle {
@@ -23,7 +21,9 @@ public class Vehicle {
     private String fuelType;
     private String fuelPolicy;
     private String type;
-
+    @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Booking> booking;
     public Vehicle() {
     }
 

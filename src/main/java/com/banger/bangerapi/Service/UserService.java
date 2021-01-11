@@ -1,11 +1,13 @@
 package com.banger.bangerapi.Service;
 
+import com.banger.bangerapi.Exception.CustomException;
 import com.banger.bangerapi.Exception.RunTimeException;
 import com.banger.bangerapi.Models.Authority;
 import com.banger.bangerapi.Models.AuthorityType;
 import com.banger.bangerapi.Models.User;
 import com.banger.bangerapi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +36,9 @@ public class UserService {
     @Autowired
     private  BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Value("${C:\\Users\\SHAAKIRA\\Desktop\\EIRLS\\Banger\\bangerapi\\src\\main\\webapp\\resources\\Image}")
+    public String uploadDir;
+
 
     @Autowired
     public UserService(){
@@ -38,10 +50,10 @@ public class UserService {
 
     public ResponseEntity<String> registerUser(User user){
         if (userRepository.existsByUserName(user.getUserName())) {
-            throw new RunTimeException("User is Already Registered!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("User is Already Registered!", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RunTimeException("User Email is Already Taken!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("User Email is Already Taken!", HttpStatus.BAD_REQUEST);
         }
         else{
             User userObject = new User(user.getCustomerName(),
@@ -70,6 +82,19 @@ public class UserService {
         userRepository.save(existingUser);
         return new ResponseEntity<>("User Updated Successfully",HttpStatus.OK);
     }
+
+    public ResponseEntity<String> updateDocuments(MultipartFile[] files, String username){
+        User existingUser=userRepository.findByUserName(username);
+        for (int i = 0; i < files.length; i++) {
+            upload(files[i]);
+        }
+        existingUser.setLicenseImage(files[0].getOriginalFilename());
+        existingUser.setUtilityImage(files[1].getOriginalFilename());
+
+        userRepository.save(existingUser);
+        return new ResponseEntity<>("User Documents Updated Successfully",HttpStatus.OK);
+    }
+
     public ResponseEntity<String> updatePassword(User user,String username){
         User existingUser=userRepository.findByUserName(username);
         existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -91,6 +116,18 @@ public class UserService {
     }
     public List<User> getBlacklistedUsers() {
         return userRepository.findBlacklistUsers();
+    }
+
+    public void upload( MultipartFile file){
+        try {
+            Path copyLocation = Paths
+                    .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
+            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 }

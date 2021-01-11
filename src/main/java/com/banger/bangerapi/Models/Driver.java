@@ -1,10 +1,15 @@
 package com.banger.bangerapi.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.*;
+@Getter
+@Setter
+@AllArgsConstructor
+@ToString
 @Entity
 public class Driver {
     @Id
@@ -16,6 +21,9 @@ public class Driver {
     private String licenseNo;
     private String nic;
     private int age;
+    @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Booking booking;
 
 
     public Driver() {
