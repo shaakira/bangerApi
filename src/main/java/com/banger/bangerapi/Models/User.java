@@ -1,20 +1,14 @@
 package com.banger.bangerapi.Models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
+
+
 @Entity
-@Table
-@Getter
-@Setter
 public class User {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -98,6 +92,31 @@ public class User {
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
+
+    public String getLicenseImage() {
+        return licenseImage;
+    }
+
+    public void setLicenseImage(String licenseImage) {
+        this.licenseImage = licenseImage;
+    }
+
+    public String getUtilityImage() {
+        return utilityImage;
+    }
+
+    public void setUtilityImage(String utilityImage) {
+        this.utilityImage = utilityImage;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

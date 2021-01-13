@@ -1,15 +1,8 @@
 package com.banger.bangerapi.Models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
-@Getter
-@Setter
-@AllArgsConstructor
-@ToString
+
 @Entity
 public class Driver {
     @Id
@@ -28,6 +21,9 @@ public class Driver {
 
     public Driver() {
     }
+
+
+
 
     public int getId() {
         return Id;

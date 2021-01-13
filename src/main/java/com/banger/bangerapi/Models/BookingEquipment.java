@@ -6,12 +6,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Set;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@ToString
+
 @Entity
-@Data
+
 public class BookingEquipment {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +25,43 @@ public class BookingEquipment {
         this.price = price;
         this.count = count;
 
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public BookingEquipment() {

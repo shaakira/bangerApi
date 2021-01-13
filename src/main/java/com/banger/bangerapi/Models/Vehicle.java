@@ -24,10 +24,11 @@ public class Vehicle {
     @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private Set<Booking> booking;
+
     public Vehicle() {
     }
 
-    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy,String type) {
+    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy, String type) {
         this.name = name;
         this.price = price;
         this.image = image;
@@ -40,7 +41,7 @@ public class Vehicle {
         this.doorCount = doorCount;
         this.fuelType = fuelType;
         this.fuelPolicy = fuelPolicy;
-        this.type=type;
+        this.type = type;
     }
 
     public int getId() {

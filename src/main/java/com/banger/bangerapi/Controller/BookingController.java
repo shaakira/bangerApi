@@ -2,6 +2,7 @@ package com.banger.bangerapi.Controller;
 
 
 
+import com.banger.bangerapi.Models.Booking;
 import com.banger.bangerapi.Models.DTO.BookingDTO;
 import com.banger.bangerapi.Models.Driver;
 import com.banger.bangerapi.Service.BookingService;
@@ -32,21 +33,32 @@ public class BookingController {
         return bookingService.addBooking(booking);
     }
 
-    @GetMapping ("/viewBooking/{username}")
-    public ResponseEntity<?> viewBooking(@PathVariable("username") String username) {
-        return bookingService.getAllPendingBooking(username);
+    @GetMapping ("/confirmedBooking/{userName}")
+    public ResponseEntity<?> confirmedBooking(@PathVariable("userName") String userName) {
+        return ResponseEntity.ok(bookingService.getConfirmedBookings(userName));
     }
 
-
+    @GetMapping ("/pastBooking/{userName}")
+    public ResponseEntity<?> pastBooking(@PathVariable("userName") String userName) {
+        return ResponseEntity.ok(bookingService.getPastBookings(userName));
+    }
     @PostMapping ("/validateDate")
     public ResponseEntity<?> validateDate(@RequestBody BookingDTO booking) {
         return bookingService.validateBookingDate(booking);
     }
 
     @PostMapping ("/validateDriver/{username}")
-    public ResponseEntity<?> validatedriver(@RequestBody Driver driver,@PathVariable("username") String username) {
+    public ResponseEntity<?> validateDriver(@RequestBody Driver driver,@PathVariable("username") String username) {
         String sss=";";
         return bookingService.validateDriver(driver, username);
+    }
+    @PostMapping("/extendBooking/{id}")
+    public ResponseEntity<?> extendBooking(@PathVariable("id") int id,@RequestBody Booking booking) throws Exception {
+        return bookingService.extendBooking(booking,id);
+    }
+    @PostMapping("/cancelBooking/{id}")
+    public ResponseEntity<?> cancelBooking(@PathVariable("id") int id,@RequestBody Booking booking) throws Exception {
+        return bookingService.cancelBooking(id,booking);
     }
 
 //    @PostMapping ("/validateLicense")
