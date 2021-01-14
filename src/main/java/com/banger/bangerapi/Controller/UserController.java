@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.DocFlavor;
+
 
 @RestController
 @CrossOrigin("*")
@@ -21,36 +23,48 @@ public class UserController {
     public ResponseEntity<?> getUser(@PathVariable("username") String username) throws Exception {
         return ResponseEntity.ok(userService.getUser(username));
     }
+    @GetMapping("/getUserById/{id}")
+    public ResponseEntity<?> getUser(@PathVariable("id") int id) throws Exception {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
     @PostMapping("/update/{username}")
-    public ResponseEntity<?> updateUSer(@PathVariable("username") String username,@RequestBody User user) throws Exception {
-        return userService.updateUser(user,username);
+    public ResponseEntity<?> updateUSer(@PathVariable("username") String username, @RequestBody User user) throws Exception {
+        return userService.updateUser(user, username);
     }
+
     @PostMapping("/updatePassword/{username}")
-    public ResponseEntity<?> updatePassword(@PathVariable("username") String username,@RequestBody User user) throws Exception {
-        return userService.updatePassword(user,username);
+    public ResponseEntity<?> updatePassword(@PathVariable("username") String username, @RequestBody User user) throws Exception {
+        return userService.updatePassword(user, username);
     }
+
     @GetMapping("/getActiveUsers")
-    private ResponseEntity<?> getActiveUsers() throws Exception{
+    private ResponseEntity<?> getActiveUsers() throws Exception {
         return ResponseEntity.ok(userService.getActiveUsers());
     }
 
     @GetMapping("/blacklistUser/{id}")
     public ResponseEntity<?> blacklistUser(@PathVariable int id) {
-       return userService.blacklistUser(id);
+        return userService.blacklistUser(id);
 
     }
 
     @PostMapping(value = "/updateDocuments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity uploadFile(@RequestParam MultipartFile[] files, String username) {
-        return userService.updateDocuments(files,username);
+        return userService.updateDocuments(files, username);
     }
 
     @GetMapping("/activateUser/{id}")
     public ResponseEntity<?> ActivateUser(@PathVariable int id) {
-      return  userService.activateUser(id);
+        return userService.activateUser(id);
     }
+
     @GetMapping("/getBlacklistedUsers")
-    private ResponseEntity<?> getBlacklistedUsers() throws Exception{
+    private ResponseEntity<?> getBlacklistedUsers() throws Exception {
         return ResponseEntity.ok(userService.getBlacklistedUsers());
+    }
+
+    @GetMapping("/dashboard")
+    public  ResponseEntity<?> getDashboardDetails()throws Exception{
+        return ResponseEntity.ok(userService.getDashBoardDetails());
     }
 }

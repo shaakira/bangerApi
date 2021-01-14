@@ -1,13 +1,11 @@
 package com.banger.bangerapi.Models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 
@@ -31,7 +29,8 @@ public class Booking {
     private User user;
 
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+            cascade=
+                    {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<BookingEquipment> bookingEquipments;
     private String Total;
     private String status;

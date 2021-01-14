@@ -11,5 +11,8 @@ import java.util.List;
 
 @Repository
 public interface VehicleRepository  extends JpaRepository<Vehicle,Integer> {
-
+    @Query("select vehicle from Vehicle vehicle where  vehicle.status='available'")
+    List<Vehicle> availableVehicle();
+    @Query("select vehicle from Vehicle vehicle where  vehicle.status='unavailable'")
+    List<Vehicle> unAvailableVehicle();
 }

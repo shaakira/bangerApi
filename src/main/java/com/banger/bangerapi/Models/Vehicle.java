@@ -21,6 +21,7 @@ public class Vehicle {
     private String fuelType;
     private String fuelPolicy;
     private String type;
+    private String status="available";
     @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private Set<Booking> booking;
@@ -28,7 +29,7 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy, String type) {
+    public Vehicle(String name, double price, String image, int passengerCount, int baggageCount, String transmission, String description, int engine, String AC, int doorCount, String fuelType, String fuelPolicy, String type,String status) {
         this.name = name;
         this.price = price;
         this.image = image;
@@ -42,6 +43,7 @@ public class Vehicle {
         this.fuelType = fuelType;
         this.fuelPolicy = fuelPolicy;
         this.type = type;
+        this.status=status;
     }
 
     public int getId() {
@@ -154,5 +156,13 @@ public class Vehicle {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

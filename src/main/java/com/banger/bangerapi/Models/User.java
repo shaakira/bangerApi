@@ -24,6 +24,11 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private Set<Booking> bookings;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+            cascade=
+                    {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Notification> notifications;
     public User() {
 
     }

@@ -52,22 +52,37 @@ public class BookingController {
         String sss=";";
         return bookingService.validateDriver(driver, username);
     }
-    @PostMapping("/extendBooking/{id}")
-    public ResponseEntity<?> extendBooking(@PathVariable("id") int id,@RequestBody Booking booking) throws Exception {
-        return bookingService.extendBooking(booking,id);
+    @PostMapping("/extendBooking/{id}/{username}")
+    public ResponseEntity<?> extendBooking(@PathVariable("id") int id,@PathVariable("username")String username,@RequestBody Booking booking) throws Exception {
+        return bookingService.extendBooking(booking,id,username);
     }
-    @PostMapping("/cancelBooking/{id}")
-    public ResponseEntity<?> cancelBooking(@PathVariable("id") int id,@RequestBody Booking booking) throws Exception {
-        return bookingService.cancelBooking(id,booking);
+    @PostMapping("/cancelBooking/{id}/{username}")
+    public ResponseEntity<?> cancelBooking(@PathVariable("id") int id,@PathVariable("username") String username,@RequestBody Booking booking) throws Exception {
+        return bookingService.cancelBooking(id,username,booking);
+    }
+    @GetMapping("/getLatest")
+    public ResponseEntity<?> getLatestBookings(){
+        return ResponseEntity.ok(bookingService.getLatest());
     }
 
-//    @PostMapping ("/validateLicense")
-//    public ResponseEntity<?> validateLicense(@RequestBody Driver driver) {
-//        return csvService.checkLicense(driver.getLicenseNo());
-//    }
-//
-//    @PostMapping ("/validateNIC")
-//    public ResponseEntity<?> validateNIC(@RequestBody Driver driver) {
-//        return insuranceService.validateNIC(driver.getNic());
-//    }
+    @GetMapping("/getAllBookings")
+    public ResponseEntity<?> getAllBookings(){
+        return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+    @GetMapping("/collectVehicle/{id}")
+    public ResponseEntity<?> collectVehicle(@PathVariable int id) {
+        return bookingService.collectVehicle(id);
+    }
+    @GetMapping("/returnedVehicle/{id}")
+    public ResponseEntity<?> returnedVehicle(@PathVariable int id) {
+        return bookingService.returnVehicle(id);
+    }
+    @GetMapping("/refusedVehicle/{id}")
+    public ResponseEntity<?> refusedVehicle(@PathVariable int id) {
+        return bookingService.refusedVehicle(id);
+    }
+    @GetMapping("/deleteBooking/{id}")
+    public ResponseEntity<?> deleteBooking(@PathVariable int id) {
+        return bookingService.deleteBooking(id);
+    }
 }

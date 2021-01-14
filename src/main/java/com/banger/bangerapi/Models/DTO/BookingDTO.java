@@ -3,7 +3,6 @@ package com.banger.bangerapi.Models.DTO;
 
 import com.banger.bangerapi.Models.BookingEquipment;
 import com.banger.bangerapi.Models.Driver;
-import com.banger.bangerapi.Models.Equipment;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,17 +1,18 @@
 package com.banger.bangerapi.Service;
 
 import com.banger.bangerapi.Exception.CustomException;
-import com.banger.bangerapi.Exception.RunTimeException;
 import com.banger.bangerapi.Models.Authority;
 import com.banger.bangerapi.Models.AuthorityType;
+import com.banger.bangerapi.Models.Booking;
+import com.banger.bangerapi.Models.DTO.DashboardDetailsDTO;
 import com.banger.bangerapi.Models.User;
+import com.banger.bangerapi.Repository.BookingRepository;
 import com.banger.bangerapi.Repository.UserRepository;
+import com.banger.bangerapi.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,57 +35,66 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private  BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BookingRepository bookingRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Value("${C:\\Users\\SHAAKIRA\\Desktop\\EIRLS\\Banger\\bangerapi\\src\\main\\webapp\\resources\\Image}")
     public String uploadDir;
 
 
     @Autowired
-    public UserService(){
+    public UserService() {
 
     }
 
     @Autowired
     private AuthorityService authorityService;
 
-    public ResponseEntity<String> registerUser(User user){
+    public ResponseEntity<?> registerUser(User user) {
         if (userRepository.existsByUserName(user.getUserName())) {
-            throw new CustomException("User is Already Registered!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Username is Already taken", HttpStatus.BAD_REQUEST);
         }
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new CustomException("User Email is Already Taken!", HttpStatus.BAD_REQUEST);
-        }
-        else{
+        } else {
             User userObject = new User(user.getCustomerName(),
                     user.getUserName(),
                     bCryptPasswordEncoder.encode(user.getPassword()),
                     user.getEmail()
             );
             Set<Authority> mappedAuthorities = new HashSet<>();
-            Authority authority=authorityService.getRoleByName(AuthorityType.ROLE_CUSTOMER);
+            Authority authority = authorityService.getRoleByName(AuthorityType.ROLE_CUSTOMER);
             mappedAuthorities.add(authority);
             userObject.setAuthorities(mappedAuthorities);
             userRepository.save(userObject);
-            return new ResponseEntity<>("User Registered Successfully",HttpStatus.OK);
+            return  ResponseEntity.ok(true);
         }
 
     }
 
-    public User getUser(String username){
-        User user=userRepository.findByUserName(username);
+    public User getUser(String username) {
+        User user = userRepository.findByUserName(username);
         return user;
     }
-    public ResponseEntity<String> updateUser(User user,String username){
-        User existingUser=userRepository.findByUserName(username);
+    public User getUserById(int id) {
+        User user = userRepository.findById(id).orElse(null);
+        return user;
+    }
+
+    public ResponseEntity<String> updateUser(User user, String username) {
+        User existingUser = userRepository.findByUserName(username);
         existingUser.setCustomerName(user.getCustomerName());
         existingUser.setEmail(user.getEmail());
         userRepository.save(existingUser);
-        return new ResponseEntity<>("User Updated Successfully",HttpStatus.OK);
+        return new ResponseEntity<>("User Updated Successfully", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> updateDocuments(MultipartFile[] files, String username){
-        User existingUser=userRepository.findByUserName(username);
+    public ResponseEntity<String> updateDocuments(MultipartFile[] files, String username) {
+        User existingUser = userRepository.findByUserName(username);
         for (int i = 0; i < files.length; i++) {
             upload(files[i]);
         }
@@ -92,42 +102,70 @@ public class UserService {
         existingUser.setUtilityImage(files[1].getOriginalFilename());
 
         userRepository.save(existingUser);
-        return new ResponseEntity<>("User Documents Updated Successfully",HttpStatus.OK);
+        return new ResponseEntity<>("User Documents Updated Successfully", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> updatePassword(User user,String username){
-        User existingUser=userRepository.findByUserName(username);
+    public ResponseEntity<String> updatePassword(User user, String username) {
+        User existingUser = userRepository.findByUserName(username);
         existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(existingUser);
-        return new ResponseEntity<>("Password Updated Successfully",HttpStatus.OK);
+        return new ResponseEntity<>("Password Updated Successfully", HttpStatus.OK);
     }
+
     public List<User> getActiveUsers() {
         return userRepository.findActiveUsers();
     }
+
     @Transactional
     public ResponseEntity<String> blacklistUser(int id) {
         userRepository.blacklist(id);
-        return new ResponseEntity<>("user blacklisted",HttpStatus.OK);
+        return new ResponseEntity<>("user blacklisted", HttpStatus.OK);
     }
+
     @Transactional
-    public  ResponseEntity<String>  activateUser(int id) {
+    public ResponseEntity<String> activateUser(int id) {
         userRepository.activate(id);
-        return new ResponseEntity<>("user activated",HttpStatus.OK);
+        return new ResponseEntity<>("user activated", HttpStatus.OK);
     }
+
     public List<User> getBlacklistedUsers() {
         return userRepository.findBlacklistUsers();
     }
 
-    public void upload( MultipartFile file){
+    public void upload(MultipartFile file) {
         try {
             Path copyLocation = Paths
                     .get(uploadDir + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
+    }
+
+    public DashboardDetailsDTO getDashBoardDetails() {
+        double confirmed=0;
+        double collected=0;
+        List<Booking> confirmedBooking=bookingRepository.newBookings();
+        for (Booking b:
+            confirmedBooking ) {
+            confirmed=confirmed+Double.parseDouble(b.getTotal());
+        }
+        List<Booking> collectedBooking=bookingRepository.ongoingBookings();
+        for (Booking b:
+                collectedBooking ) {
+            collected=collected+Double.parseDouble(b.getTotal());
+        }
+        double total=collected+confirmed;
+        DashboardDetailsDTO dto = new DashboardDetailsDTO();
+        int newBooking = bookingRepository.newBookings().size();
+        dto.setNewBookingCount(newBooking);
+        dto.setVehicleCount(vehicleRepository.findAll().size());
+        dto.setCustomersCount(userRepository.findActiveUsers().size());
+        dto.setAvailableVehicleCount(vehicleRepository.availableVehicle().size());
+        dto.setOnRentCount(vehicleRepository.unAvailableVehicle().size());
+        dto.setEstimation(total);
+        return dto;
     }
 
 }

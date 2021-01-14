@@ -72,7 +72,20 @@ public class AuthenticationController {
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
 
-        return userService.registerUser(user);
+      userService.registerUser(user);
+        authenticate(user.getUserName(), user.getPassword());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        User user2=userService.getUser(user.getUserName());
+        System.out.println(userDetails);
+        if (userDetails == null) {
+
+        }
+        return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), roles,user2.getStatus()));
+
 
     }
 
