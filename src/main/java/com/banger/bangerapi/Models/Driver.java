@@ -15,7 +15,7 @@ public class Driver {
     private String nic;
     private int age;
     @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+            cascade = {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH})
     private Booking booking;
 
 

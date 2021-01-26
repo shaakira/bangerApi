@@ -54,13 +54,51 @@ public class UserService {
     @Autowired
     private AuthorityService authorityService;
 
+
+    public ResponseEntity<?> googleLogin(User users) {
+        if (userRepository.existsByUserName(users.getUserName())) {
+            return  null;
+        }
+        if (userRepository.existsByEmail(users.getEmail())) {
+            return null;
+        } else {
+            try {
+                User user = new User();
+                user.setEmail(users.getEmail());
+                user.setUserName(users.getUserName());
+                user.setCustomerName(users.getCustomerName());
+                user.setPassword(bCryptPasswordEncoder.encode("default"));
+
+
+                Set<Authority> mappedAuthorities = new HashSet<>();
+
+                Authority authority = authorityService.getRoleByName(AuthorityType.ROLE_CUSTOMER);
+                mappedAuthorities.add(authority);
+                user.setAuthorities(mappedAuthorities);
+
+
+                userRepository.save(user);
+
+                //create a new user account after the checking
+                return ResponseEntity.ok("User Registered Successfully");
+            } catch (Exception e) {
+                throw  new CustomException ("Error Response" + e,HttpStatus.BAD_REQUEST);
+
+            }
+        }
+    }
+
     public ResponseEntity<?> registerUser(User user) {
         if (userRepository.existsByUserName(user.getUserName())) {
             throw new CustomException("Username is Already taken", HttpStatus.BAD_REQUEST);
         }
-        if (userRepository.existsByEmail(user.getEmail())) {
+       else if (userRepository.existsByEmail(user.getEmail())) {
             throw new CustomException("User Email is Already Taken!", HttpStatus.BAD_REQUEST);
-        } else {
+        }
+        else if(user.getPassword().length()<6){
+            throw new CustomException("Password should have 6 or more characters", HttpStatus.BAD_REQUEST);
+        }
+        else {
             User userObject = new User(user.getCustomerName(),
                     user.getUserName(),
                     bCryptPasswordEncoder.encode(user.getPassword()),
@@ -167,5 +205,17 @@ public class UserService {
         dto.setEstimation(total);
         return dto;
     }
-
+    public ResponseEntity<String> deleteUser(String username) {
+        User user=userRepository.findByUserName(username);
+        if(user!=null){
+            List<Booking> booking=bookingRepository.findByUser(user);
+            for (Booking b:booking) {
+                if(b.getStatus().equals("confirmed")||b.getStatus().equals("collected")){
+                    throw  new CustomException("Cannot delete user. User has bookings onGoing  or up coming. to delete the user cancel the orders",HttpStatus.BAD_REQUEST);
+                }
+            }
+           userRepository.delete(user);
+        }
+        return new ResponseEntity<>("Successfully deleted", HttpStatus.OK);
+    }
 }

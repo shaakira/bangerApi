@@ -22,7 +22,7 @@ public class User {
     private String status="active";
     private String type="customer";
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+            cascade = {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Booking> bookings;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
@@ -38,6 +38,10 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.email = email;
+    }
+
+    public User(String userName) {
+        this.userName = userName;
     }
 
     public Integer getId() {
@@ -124,7 +128,7 @@ public class User {
 
 
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "authority_id") })

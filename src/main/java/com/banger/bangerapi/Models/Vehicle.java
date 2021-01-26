@@ -23,7 +23,7 @@ public class Vehicle {
     private String type;
     private String status="available";
     @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+            cascade = {CascadeType.DETACH,  CascadeType.MERGE,  CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Booking> booking;
 
     public Vehicle() {

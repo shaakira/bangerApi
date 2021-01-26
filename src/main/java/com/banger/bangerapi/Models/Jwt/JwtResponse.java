@@ -1,11 +1,13 @@
 package com.banger.bangerapi.Models.Jwt;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Getter
+@Setter
 public class JwtResponse implements Serializable {
 
     private static final long serialVersionUID = -8091879091924046844L;
@@ -20,5 +22,8 @@ public class JwtResponse implements Serializable {
         this.username = username;
         this.roles=roles;
         this.status=status;
+    }
+
+    public JwtResponse(String token, String username, List<String> roles) {
     }
 }

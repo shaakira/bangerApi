@@ -20,6 +20,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Override
     Optional<Booking> findById(Integer integer);
 
+    List<Booking> findByVehicle(Vehicle vehicle);
+
+
     List<Booking> findByVehicleAndPickUpDateLessThanEqualAndReturnDateGreaterThanEqual(Vehicle vehicle, Date returnDate, Date pickUpDate);
 
     //    @Query(value="SELECT * from booking  where status=(:Pending)", nativeQuery = true)

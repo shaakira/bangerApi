@@ -19,15 +19,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -50,6 +48,40 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    @PostMapping("/GooglesignUp")
+    public ResponseEntity<?> registerUserGoogle( @RequestBody User registerUser) {
+        ResponseEntity response= userService.googleLogin(registerUser);
+        User loggedInUser = null;
+        // String token = null;
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(registerUser.getUserName());
+            if (!passwordEncoder.matches("default", userDetails.getPassword())) {
+                throw new BadCredentialsException("Bad Credentials");
+            }
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            loggedInUser   = ((BangerUserDetails) authentication.getPrincipal()).getUserDetails();
+
+        } catch (AuthenticationException e) {
+
+        }
+        if(loggedInUser!=null) {
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(registerUser.getUserName());
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+            final String token = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new JwtResponse(token, userDetails.getUsername(), roles, loggedInUser.getStatus()));
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {

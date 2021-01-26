@@ -67,4 +67,9 @@ public class UserController {
     public  ResponseEntity<?> getDashboardDetails()throws Exception{
         return ResponseEntity.ok(userService.getDashBoardDetails());
     }
+    @GetMapping("/deleteUser/{username}")
+    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+        return userService.deleteUser(username);
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.banger.bangerapi.Service;
 
+import com.banger.bangerapi.Exception.CustomException;
+import com.banger.bangerapi.Models.Booking;
 import com.banger.bangerapi.Models.User;
 import com.banger.bangerapi.Models.Vehicle;
+import com.banger.bangerapi.Repository.BookingRepository;
 import com.banger.bangerapi.Repository.UserRepository;
 import com.banger.bangerapi.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,9 @@ public class VehicleService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
 
     @Value("${C:\\Users\\SHAAKIRA\\Desktop\\EIRLS\\Banger\\bangerapi\\src\\main\\webapp\\resources\\Image}")
@@ -58,9 +64,18 @@ public class VehicleService {
     }
 
     public ResponseEntity<String> deleteVehicle(int id) {
-        vehicleRepository.deleteById(id);
+        Vehicle vehicle=vehicleRepository.findById(id).get();
+        if(vehicle!=null){
+            List<Booking> booking=bookingRepository.findByVehicle(vehicle);
+            for (Booking b:booking) {
+                if(b.getStatus().equals("confirmed")||b.getStatus().equals("collected")){
+                    throw  new CustomException("Cannot delete Vehicle it has been booked cancel the booking to delete the Vehicle",HttpStatus.BAD_REQUEST);
+                }
+            }
+            vehicleRepository.deleteById(id);
+        }
         return new ResponseEntity<>("Successfully deleted", HttpStatus.OK);
-    }
+      }
 
     public ResponseEntity<String> updatePrice(Vehicle vehicle, int id) {
         Vehicle existingVehicle = vehicleRepository.findById(id).orElse(null);
