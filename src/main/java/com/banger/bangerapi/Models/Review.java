@@ -17,6 +17,12 @@ public class Review {
     public Review() {
     }
 
+    public Review(String reviewer, String review, String date) {
+        this.reviewer = reviewer;
+        this.review = review;
+        this.date = date;
+    }
+
     public int getId() {
         return Id;
     }
